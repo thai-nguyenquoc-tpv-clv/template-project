@@ -45,6 +45,7 @@ jobs:
         with: 
           project_id: ${{ secrets.DEV_GOOGLE_PROJECT }}
           service_account_key: ${{ secrets.DEV_GOOGLE_APPLICATION_CREDENTIALS }}
+          install_components: "gke-gcloud-auth-plugin"
           export_default_credentials: true
 
       - name: Build and Push Docker Image
@@ -54,3 +55,9 @@ jobs:
           gcloud auth configure-docker asia-southeast1-docker.pkg.dev
           docker build -t asia-southeast1-docker.pkg.dev/one-global-bkg-dev/$GOOGLE_PROJECT/template:v1 .
           docker push asia-southeast1-docker.pkg.dev/one-global-bkg-dev/$GOOGLE_PROJECT/template:v1
+
+      - name: Deploy to GKE
+        run: |
+          gcloud container clusters get-credentials sea1-dev-bkg-gke01 --region asia-southeast1
+          sed -i "s/GOOGLE_PROJECT/$GOOGLE_PROJECT/g" resources.yml
+          kubectl apply -f resources.yml

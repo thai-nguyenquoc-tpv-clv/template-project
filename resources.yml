@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-ci-cd
+  labels:
+    app: test-ci-cd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-ci-cd
+  template:
+    metadata:
+      labels:
+        app: test-ci-cd
+    spec:
+      containers:
+      - name: test-ci-cd
+        image: asia-southeast1-docker.pkg.dev/one-global-bkg-dev/GOOGLE_PROJECT/template:v1
+        ports:
+        - containerPort: 3000
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: "128Mi"
+          requests:
+            cpu: "0.25"
+            memory: "64Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-ci-cd-service
+spec:
+  selector:
+    app: test-ci-cd
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer
