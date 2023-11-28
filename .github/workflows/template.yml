@@ -6,6 +6,7 @@ on:
     branches: 
       - feature/*
 jobs:
+  # This job runs lint and unit tests
   test:
     name: Run Lint & Test
     runs-on: ubuntu-latest
@@ -29,3 +30,27 @@ jobs:
 
       - name: Run E2E Tests
         run: pnpm test:e2e
+
+  # This job builds the application image and runs e2e tests with service containers
+  build:
+    name: Run Build
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      
+      - name: Install GCloud CLI
+        uses: google-github-actions/setup-gcloud@v0
+        with: 
+          project_id: ${{ secrets.DEV_GOOGLE_PROJECT }}
+          service_account_key: ${{ secrets.DEV_GOOGLE_APPLICATION_CREDENTIALS }}
+          export_default_credentials: true
+
+      - name: Build and Push Docker Image
+        env:
+          GOOGLE_PROJECT: ${{ secrets.DEV_GOOGLE_PROJECT }}
+        run: |
+          gcloud auth configure-docker asia-southeast1-docker.pkg.dev
+          docker build -t asia-southeast1-docker.pkg.dev/one-global-bkg-dev/$DEV_GOOGLE_PROJECT/template:v1 .
+          docker push asia-southeast1-docker.pkg.dev/one-global-bkg-dev/$DEV_GOOGLE_PROJECT/template:v1
