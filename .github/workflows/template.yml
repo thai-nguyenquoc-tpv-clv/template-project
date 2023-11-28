@@ -52,5 +52,5 @@ jobs:
           GOOGLE_PROJECT: ${{ secrets.DEV_GOOGLE_PROJECT }}
         run: |
           gcloud auth configure-docker asia-southeast1-docker.pkg.dev
-          docker build -t asia-southeast1-docker.pkg.dev/one-global-bkg-dev/$DEV_GOOGLE_PROJECT/template:v1 .
-          docker push asia-southeast1-docker.pkg.dev/one-global-bkg-dev/$DEV_GOOGLE_PROJECT/template:v1
+          docker build -t asia-southeast1-docker.pkg.dev/one-global-bkg-dev/$GOOGLE_PROJECT/template:v1 .
+          docker push asia-southeast1-docker.pkg.dev/one-global-bkg-dev/$GOOGLE_PROJECT/template:v1
