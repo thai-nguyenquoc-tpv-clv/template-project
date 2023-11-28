@@ -1,0 +1,31 @@
+
+name: Template Workflow
+run-name: Run Template Workflow
+on: 
+  push: 
+    branches: 
+      - feature/*
+jobs:
+  test:
+    name: Run Lint & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Use NodeJS v18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+
+      - name: Install Package Dependencies
+        run: pnpm install
+      
+      - name: Runt Lint
+        run: pnpm lint
+
+      - name: Run Unit Tests
+        run: pnpm test
+
+      - name: Run E2E Tests
+        run: pnpm test:e2e
